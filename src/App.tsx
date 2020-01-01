@@ -1,23 +1,24 @@
 import React from 'react';
-import CSS from 'csstype';
+
+import TodoList from './components/todo-list/todo-list.component';
 
 import './App.css';
 
-interface ITodo {
+export interface ITodo {
   id: number;
   title: string;
   completed: boolean;
   important: boolean;
 }
 
-interface IProps {}
+type Props = {};
 
-interface IState {
+type State = {
   todos: ITodo[];
-}
+};
 
-class App extends React.Component<IProps, IState> {
-  state: IState = {
+class App extends React.Component<Props, State> {
+  state: State = {
     todos: [],
   };
 
@@ -44,20 +45,7 @@ class App extends React.Component<IProps, IState> {
   render() {
     return (
       <div className="App">
-        {this.state.todos.map((todo) => {
-          const styles: CSS.Properties = {
-            fontWeight: todo.important ? 'bold' : undefined,
-            textDecoration: todo.completed ? 'line-through' : undefined,
-          };
-
-          return (
-            <ul key={todo.id} className="todo-list">
-              <li style={styles}>
-                <span>{todo.id}</span>: {todo.title}
-              </li>
-            </ul>
-          );
-        })}
+        <TodoList todos={this.state.todos} />
       </div>
     );
   }
