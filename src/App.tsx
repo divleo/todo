@@ -42,10 +42,27 @@ class App extends React.Component<Props, State> {
       .then((strippedTodos) => this.setState({ todos: strippedTodos }));
   }
 
+  onToggleCompleted = (id: number) => {
+    this.setState(({ todos }) => {
+      return {
+        todos: todos.map((todo) => {
+          if (todo.id === id) {
+            return { ...todo, completed: !todo.completed };
+          } else {
+            return todo;
+          }
+        }),
+      };
+    });
+  };
+
   render() {
     return (
       <div className="App">
-        <TodoList todos={this.state.todos} />
+        <TodoList
+          todos={this.state.todos}
+          onToggleCompleted={this.onToggleCompleted}
+        />
       </div>
     );
   }

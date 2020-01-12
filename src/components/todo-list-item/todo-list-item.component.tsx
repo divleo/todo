@@ -6,17 +6,25 @@ import './todo-list-item.styles.css';
 
 type Props = {
   todo: ITodo;
+  onToggleCompleted: Function;
 };
 
 const TodoListItem = (props: Props) => {
   const styles: CSS.Properties = {
-    fontWeight: props.todo.important ? 'bold' : undefined,
     textDecoration: props.todo.completed ? 'line-through' : undefined,
+    fontWeight: props.todo.important ? 'bold' : undefined,
   };
 
   return (
     <li className="todo-list-item">
-      {props.todo.id}: <span style={styles}>{props.todo.title}</span>
+      {props.todo.id}:{' '}
+      <span
+        className="todo-list-item-title"
+        style={styles}
+        onClick={() => props.onToggleCompleted(props.todo.id)}
+      >
+        {props.todo.title}
+      </span>
     </li>
   );
 };

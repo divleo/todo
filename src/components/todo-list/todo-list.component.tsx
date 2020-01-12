@@ -7,13 +7,20 @@ import './todo-list.styles.css';
 
 type Props = {
   todos: ITodo[];
+  onToggleCompleted: Function;
 };
 
 const TodoList = (props: Props) => {
   return (
     <ul className="todo-list">
       {props.todos.map((todo) => {
-        return <TodoListItem key={todo.id} todo={todo} />;
+        return (
+          <TodoListItem
+            key={todo.id}
+            todo={todo}
+            onToggleCompleted={props.onToggleCompleted}
+          />
+        );
       })}
     </ul>
   );
