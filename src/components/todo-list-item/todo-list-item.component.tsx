@@ -7,6 +7,8 @@ import './todo-list-item.styles.css';
 type Props = {
   todo: ITodo;
   onToggleCompleted: Function;
+  onToggleImportant: Function;
+  onDelete: Function;
 };
 
 const TodoListItem = (props: Props) => {
@@ -17,14 +19,32 @@ const TodoListItem = (props: Props) => {
 
   return (
     <li className="todo-list-item">
-      {props.todo.id}:{' '}
-      <span
-        className="todo-list-item-title"
-        style={styles}
-        onClick={() => props.onToggleCompleted(props.todo.id)}
-      >
-        {props.todo.title}
-      </span>
+      <p>
+        {props.todo.id}:{' '}
+        <span className="todo-list-item-title" style={styles}>
+          {props.todo.title}
+        </span>
+      </p>
+      <div className="todo-list-item-buttons">
+        <button
+          className="todo-list-item-button"
+          onClick={() => props.onToggleCompleted(props.todo.id)}
+        >
+          ✓
+        </button>
+        <button
+          className="todo-list-item-button"
+          onClick={() => props.onToggleImportant(props.todo.id)}
+        >
+          !
+        </button>
+        <button
+          className="todo-list-item-button"
+          onClick={() => props.onDelete(props.todo.id)}
+        >
+          ☓
+        </button>
+      </div>
     </li>
   );
 };

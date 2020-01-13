@@ -42,16 +42,36 @@ class App extends React.Component<Props, State> {
       .then((strippedTodos) => this.setState({ todos: strippedTodos }));
   }
 
-  onToggleCompleted = (id: number) => {
+  toggleProperty(todos: ITodo[], id: number, property: keyof ITodo): ITodo[] {
+    return todos.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, [property]: !todo[property] };
+      } else {
+        return todo;
+      }
+    });
+  }
+
+  onToggleCompleted = (id: number): void => {
     this.setState(({ todos }) => {
       return {
-        todos: todos.map((todo) => {
-          if (todo.id === id) {
-            return { ...todo, completed: !todo.completed };
-          } else {
-            return todo;
-          }
-        }),
+        todos: this.toggleProperty(todos, id, 'completed'),
+      };
+    });
+  };
+
+  onToggleImportant = (id: number): void => {
+    this.setState(({ todos }) => {
+      return {
+        todos: this.toggleProperty(todos, id, 'important'),
+      };
+    });
+  };
+
+  onDelete = (id: number): void => {
+    this.setState(({ todos }) => {
+      return {
+        todos: todos.filter((todo) => todo.id !== id),
       };
     });
   };
@@ -62,6 +82,8 @@ class App extends React.Component<Props, State> {
         <TodoList
           todos={this.state.todos}
           onToggleCompleted={this.onToggleCompleted}
+          onToggleImportant={this.onToggleImportant}
+          onDelete={this.onDelete}
         />
       </div>
     );
