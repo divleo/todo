@@ -1,3 +1,22 @@
+.todo-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 30px;
+}
+
 .todo-list-item-title {
-  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.todo-list-item-buttons {
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+}
+
+.todo-list-item-button {
+  width: 30px;
 }
