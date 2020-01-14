@@ -16,11 +16,13 @@ type Props = {};
 
 type State = {
   todos: ITodo[];
+  searchField: string;
 };
 
 class App extends React.Component<Props, State> {
   state: State = {
     todos: [],
+    searchField: '',
   };
 
   getHalfTodos(todos: any): any {
@@ -41,6 +43,20 @@ class App extends React.Component<Props, State> {
       .then((response) => response.json())
       .then((todos) => this.getHalfTodos(todos).map(this.stripTodo))
       .then((strippedTodos) => this.setState({ todos: strippedTodos }));
+  }
+
+  onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ searchField: event.target.value });
+  };
+
+  searchTodos(todos: ITodo[], text: string): ITodo[] {
+    if (text.length === 0) {
+      return todos;
+    }
+
+    return todos.filter((todo) =>
+      todo.title.toLowerCase().includes(text.toLocaleLowerCase())
+    );
   }
 
   toggleProperty(todos: ITodo[], id: number, property: keyof ITodo): ITodo[] {
@@ -78,11 +94,19 @@ class App extends React.Component<Props, State> {
   };
 
   render() {
+    const visibleTodos = this.searchTodos(
+      this.state.todos,
+      this.state.searchField
+    );
+
     return (
       <div className="App">
-        <SearchBox />
+        <SearchBox
+          placeholder={'search todo...'}
+          onSearchChange={this.onSearchChange}
+        />
         <TodoList
-          todos={this.state.todos}
+          todos={visibleTodos}
           onToggleCompleted={this.onToggleCompleted}
           onToggleImportant={this.onToggleImportant}
           onDelete={this.onDelete}
