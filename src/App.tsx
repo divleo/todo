@@ -3,6 +3,7 @@ import React from 'react';
 import TodoList from './components/todo-list/todo-list.component';
 
 import './App.css';
+import SearchBox from './components/search-box/search-box.component';
 
 export interface ITodo {
   id: number;
@@ -79,6 +80,7 @@ class App extends React.Component<Props, State> {
   render() {
     return (
       <div className="App">
+        <SearchBox />
         <TodoList
           todos={this.state.todos}
           onToggleCompleted={this.onToggleCompleted}
