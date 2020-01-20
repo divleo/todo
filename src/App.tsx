@@ -1,9 +1,10 @@
 import React from 'react';
 
-import TodoList from './components/todo-list/todo-list.component';
-
 import './App.css';
+
 import SearchBox from './components/search-box/search-box.component';
+import TodoList from './components/todo-list/todo-list.component';
+import ItemAddForm from './components/item-add-form/item-add-form.component';
 
 export interface ITodo {
   id: number;
@@ -20,16 +21,18 @@ type State = {
 };
 
 class App extends React.Component<Props, State> {
+  latestId: number = 0;
+
   state: State = {
     todos: [],
     searchField: '',
   };
 
-  getHalfTodos(todos: any): any {
+  getHalfTodos(todos: any): ITodo[] {
     return todos.slice(0, Math.floor(todos.length / 2));
   }
 
-  stripTodo(todo: any): ITodo {
+  stripTodo(todo: ITodo): ITodo {
     return {
       id: todo.id,
       title: todo.title,
@@ -38,11 +41,15 @@ class App extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     fetch('https://jsonplaceholder.typicode.com/todos?userId=1')
       .then((response) => response.json())
       .then((todos) => this.getHalfTodos(todos).map(this.stripTodo))
-      .then((strippedTodos) => this.setState({ todos: strippedTodos }));
+      .then((strippedTodos) => this.setState({ todos: strippedTodos }))
+      .then(() => {
+        const { todos } = this.state;
+        this.latestId = todos[todos.length - 1].id;
+      });
   }
 
   onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -93,6 +100,23 @@ class App extends React.Component<Props, State> {
     });
   };
 
+  onItemAdd = (text: string): void => {
+    this.setState(({ todos }) => {
+      this.latestId += 1;
+
+      const newTodo: ITodo = {
+        id: this.latestId,
+        title: text,
+        completed: false,
+        important: false,
+      };
+
+      return {
+        todos: [...todos, newTodo],
+      };
+    });
+  };
+
   render() {
     const visibleTodos = this.searchTodos(
       this.state.todos,
@@ -111,6 +135,7 @@ class App extends React.Component<Props, State> {
           onToggleImportant={this.onToggleImportant}
           onDelete={this.onDelete}
         />
+        <ItemAddForm onItemAdd={this.onItemAdd} />
       </div>
     );
   }
