@@ -5,6 +5,7 @@ import './App.css';
 import SearchBox from './components/search-box/search-box.component';
 import TodoList from './components/todo-list/todo-list.component';
 import ItemAddForm from './components/item-add-form/item-add-form.component';
+import ItemStatusFilter from './components/item-status-filter/item-status-filter.component';
 
 export interface ITodo {
   id: number;
@@ -18,6 +19,7 @@ type Props = {};
 type State = {
   todos: ITodo[];
   searchField: string;
+  filter: string;
 };
 
 class App extends React.Component<Props, State> {
@@ -26,13 +28,14 @@ class App extends React.Component<Props, State> {
   state: State = {
     todos: [],
     searchField: '',
+    filter: 'all',
   };
 
-  getHalfTodos(todos: any): ITodo[] {
+  getHalfTodos(todos: Array<any>): Array<any> {
     return todos.slice(0, Math.floor(todos.length / 2));
   }
 
-  stripTodo(todo: ITodo): ITodo {
+  stripTodo(todo: any): ITodo {
     return {
       id: todo.id,
       title: todo.title,
@@ -129,6 +132,7 @@ class App extends React.Component<Props, State> {
           placeholder={'search todo...'}
           onSearchChange={this.onSearchChange}
         />
+        <ItemStatusFilter />
         <TodoList
           todos={visibleTodos}
           onToggleCompleted={this.onToggleCompleted}
