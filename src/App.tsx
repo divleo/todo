@@ -69,6 +69,21 @@ class App extends React.Component<Props, State> {
     );
   }
 
+  onFilterChange = (name: string): void => {
+    this.setState({ filter: name });
+  };
+
+  filterTodos(todos: ITodo[], filter: string): ITodo[] {
+    switch (filter) {
+      case 'uncompleted':
+        return todos.filter((todo) => !todo.completed);
+      case 'completed':
+        return todos.filter((todo) => todo.completed);
+      default:
+        return todos;
+    }
+  }
+
   toggleProperty(todos: ITodo[], id: number, property: keyof ITodo): ITodo[] {
     return todos.map((todo) => {
       if (todo.id === id) {
@@ -122,9 +137,15 @@ class App extends React.Component<Props, State> {
 
   render() {
     const visibleTodos = this.searchTodos(
-      this.state.todos,
+      this.filterTodos(this.state.todos, this.state.filter),
       this.state.searchField
     );
+
+    const allTodosCount = this.state.todos.length;
+    const uncompletedTodosCount = this.state.todos.filter(
+      (todo) => !todo.completed
+    ).length;
+    const completedTodosCount = allTodosCount - uncompletedTodosCount;
 
     return (
       <div className="App">
@@ -132,7 +153,13 @@ class App extends React.Component<Props, State> {
           placeholder={'search todo...'}
           onSearchChange={this.onSearchChange}
         />
-        <ItemStatusFilter />
+        <ItemStatusFilter
+          filter={this.state.filter}
+          onFilterChange={this.onFilterChange}
+          allTodosCount={allTodosCount}
+          uncompletedTodosCount={uncompletedTodosCount}
+          completedTodosCount={completedTodosCount}
+        />
         <TodoList
           todos={visibleTodos}
           onToggleCompleted={this.onToggleCompleted}
