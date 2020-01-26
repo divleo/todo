@@ -1,0 +1,14 @@
+.todo-list {
+  /* width: 65rem; */
+  /* width: 40vmax; */
+  /* width: 40%; */
+  width: 650px;
+
+  padding: 0;
+  margin: 0;
+  /* list-style-type: none; */
+
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+}

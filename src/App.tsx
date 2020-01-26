@@ -1,26 +1,175 @@
 import React from 'react';
-import logo from './logo.svg';
+
 import './App.css';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import SearchBox from './components/search-box/search-box.component';
+import TodoList from './components/todo-list/todo-list.component';
+import ItemAddForm from './components/item-add-form/item-add-form.component';
+import ItemStatusFilter from './components/item-status-filter/item-status-filter.component';
+
+export interface ITodo {
+  id: number;
+  title: string;
+  completed: boolean;
+  important: boolean;
+}
+
+type Props = {};
+
+type State = {
+  todos: ITodo[];
+  searchField: string;
+  filter: string;
+};
+
+class App extends React.Component<Props, State> {
+  latestId: number = 0;
+
+  state: State = {
+    todos: [],
+    searchField: '',
+    filter: 'all',
+  };
+
+  getHalfTodos(todos: Array<any>): Array<any> {
+    return todos.slice(0, Math.floor(todos.length / 2));
+  }
+
+  stripTodo(todo: any): ITodo {
+    return {
+      id: todo.id,
+      title: todo.title,
+      completed: todo.completed,
+      important: !todo.completed,
+    };
+  }
+
+  componentDidMount(): void {
+    fetch('https://jsonplaceholder.typicode.com/todos?userId=1')
+      .then((response) => response.json())
+      .then((todos) => this.getHalfTodos(todos).map(this.stripTodo))
+      .then((strippedTodos) => this.setState({ todos: strippedTodos }))
+      .then(() => {
+        const { todos } = this.state;
+        this.latestId = todos[todos.length - 1].id;
+      });
+  }
+
+  onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ searchField: event.target.value });
+  };
+
+  searchTodos(todos: ITodo[], text: string): ITodo[] {
+    if (text.length === 0) {
+      return todos;
+    }
+
+    return todos.filter((todo) =>
+      todo.title.toLowerCase().includes(text.toLocaleLowerCase())
+    );
+  }
+
+  onFilterChange = (name: string): void => {
+    this.setState({ filter: name });
+  };
+
+  filterTodos(todos: ITodo[], filter: string): ITodo[] {
+    switch (filter) {
+      case 'uncompleted':
+        return todos.filter((todo) => !todo.completed);
+      case 'completed':
+        return todos.filter((todo) => todo.completed);
+      default:
+        return todos;
+    }
+  }
+
+  toggleProperty(todos: ITodo[], id: number, property: keyof ITodo): ITodo[] {
+    return todos.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, [property]: !todo[property] };
+      } else {
+        return todo;
+      }
+    });
+  }
+
+  onToggleCompleted = (id: number): void => {
+    this.setState(({ todos }) => {
+      return {
+        todos: this.toggleProperty(todos, id, 'completed'),
+      };
+    });
+  };
+
+  onToggleImportant = (id: number): void => {
+    this.setState(({ todos }) => {
+      return {
+        todos: this.toggleProperty(todos, id, 'important'),
+      };
+    });
+  };
+
+  onDelete = (id: number): void => {
+    this.setState(({ todos }) => {
+      return {
+        todos: todos.filter((todo) => todo.id !== id),
+      };
+    });
+  };
+
+  onItemAdd = (text: string): void => {
+    this.setState(({ todos }) => {
+      this.latestId += 1;
+
+      const newTodo: ITodo = {
+        id: this.latestId,
+        title: text,
+        completed: false,
+        important: false,
+      };
+
+      return {
+        todos: [...todos, newTodo],
+      };
+    });
+  };
+
+  render() {
+    const visibleTodos = this.searchTodos(
+      this.filterTodos(this.state.todos, this.state.filter),
+      this.state.searchField
+    );
+
+    const allTodosCount = this.state.todos.length;
+    const uncompletedTodosCount = this.state.todos.filter(
+      (todo) => !todo.completed
+    ).length;
+    const completedTodosCount = allTodosCount - uncompletedTodosCount;
+
+    return (
+      <div className="App">
+        <SearchBox
+          placeholder={'search todo...'}
+          onSearchChange={this.onSearchChange}
+        />
+        <ItemStatusFilter
+          filter={this.state.filter}
+          onFilterChange={this.onFilterChange}
+          allTodosCount={allTodosCount}
+          uncompletedTodosCount={uncompletedTodosCount}
+          completedTodosCount={completedTodosCount}
+        />
+        <TodoList
+          todos={visibleTodos}
+          onToggleCompleted={this.onToggleCompleted}
+          onToggleImportant={this.onToggleImportant}
+          onDelete={this.onDelete}
+        />
+        <ItemAddForm onItemAdd={this.onItemAdd} />
+      </div>
+    );
+  }
 }
 
 export default App;
