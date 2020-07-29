@@ -4,18 +4,14 @@
   align-items: center;
 
   height: 30px;
-  /* height: 3rem; */
 }
 
 .todo-list-item-title {
-  /* cursor: pointer; */
-  /* margin-left: 5px; */
-  margin-left: 0.5rem;
+  margin-left: 5px;
 }
 
 .todo-list-item-buttons {
   width: 100px;
-  /* width: 6vw; */
   display: flex;
   justify-content: space-between;
   align-self: center;
@@ -23,5 +19,4 @@
 
 .todo-list-item-button {
   width: 30px;
-  /* width: 2rem; */
 }

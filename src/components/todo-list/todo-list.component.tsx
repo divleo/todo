@@ -12,22 +12,20 @@ type Props = {
   onDelete: Function;
 };
 
-const TodoList = (props: Props) => {
-  return (
-    <ul className="todo-list">
-      {props.todos.map((todo) => {
-        return (
-          <TodoListItem
-            key={todo.id}
-            todo={todo}
-            onToggleCompleted={props.onToggleCompleted}
-            onToggleImportant={props.onToggleImportant}
-            onDelete={props.onDelete}
-          />
-        );
-      })}
-    </ul>
-  );
-};
+const TodoList = (props: Props) => (
+  <ul className="todo-list">
+    {props.todos.map((todo) => {
+      return (
+        <TodoListItem
+          key={todo.id}
+          todo={todo}
+          onToggleCompleted={props.onToggleCompleted}
+          onToggleImportant={props.onToggleImportant}
+          onDelete={props.onDelete}
+        />
+      );
+    })}
+  </ul>
+);
 
 export default TodoList;

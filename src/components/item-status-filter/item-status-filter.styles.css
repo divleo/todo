@@ -1,0 +1,10 @@
+.filter-button {
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-button-clicked {
+  color: #fff;
+  background-color: grey;
+  border-color: grey;
+}
