@@ -23,13 +23,27 @@ type State = {
 };
 
 class App extends React.Component<Props, State> {
-  latestId: number = 0;
+  private latestId: number;
 
-  state: State = {
-    todos: [],
-    searchField: '',
-    filter: 'all',
-  };
+  constructor(props: Readonly<Props>) {
+    super(props);
+
+    this.latestId = 0;
+
+    this.state = {
+      todos: [],
+      searchField: '',
+      filter: 'all',
+    };
+
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+
+    this.onToggleCompleted = this.onToggleCompleted.bind(this);
+    this.onToggleImportant = this.onToggleImportant.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.onItemAdd = this.onItemAdd.bind(this);
+  }
 
   getHalfTodos(todos: Array<any>): Array<any> {
     return todos.slice(0, Math.floor(todos.length / 2));
@@ -44,20 +58,23 @@ class App extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount(): void {
-    fetch('https://jsonplaceholder.typicode.com/todos?userId=1')
-      .then((response) => response.json())
-      .then((todos) => this.getHalfTodos(todos).map(this.stripTodo))
-      .then((strippedTodos) => this.setState({ todos: strippedTodos }))
-      .then(() => {
-        const { todos } = this.state;
-        this.latestId = todos[todos.length - 1].id;
-      });
+  async componentDidMount(): Promise<void> {
+    const res = await fetch(
+      'https://jsonplaceholder.typicode.com/todos?userId=1'
+    );
+    const data = await res.json();
+
+    const todos = this.getHalfTodos(data).map(this.stripTodo);
+
+    this.setState(
+      { todos },
+      () => (this.latestId = todos[todos.length - 1].id)
+    );
   }
 
-  onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  onSearchChange(event: React.ChangeEvent<HTMLInputElement>): void {
     this.setState({ searchField: event.target.value });
-  };
+  }
 
   searchTodos(todos: ITodo[], text: string): ITodo[] {
     if (text.length === 0) {
@@ -69,9 +86,9 @@ class App extends React.Component<Props, State> {
     );
   }
 
-  onFilterChange = (name: string): void => {
+  onFilterChange(name: string): void {
     this.setState({ filter: name });
-  };
+  }
 
   filterTodos(todos: ITodo[], filter: string): ITodo[] {
     switch (filter) {
@@ -94,31 +111,31 @@ class App extends React.Component<Props, State> {
     });
   }
 
-  onToggleCompleted = (id: number): void => {
+  onToggleCompleted(id: number): void {
     this.setState(({ todos }) => {
       return {
         todos: this.toggleProperty(todos, id, 'completed'),
       };
     });
-  };
+  }
 
-  onToggleImportant = (id: number): void => {
+  onToggleImportant(id: number): void {
     this.setState(({ todos }) => {
       return {
         todos: this.toggleProperty(todos, id, 'important'),
       };
     });
-  };
+  }
 
-  onDelete = (id: number): void => {
+  onDelete(id: number): void {
     this.setState(({ todos }) => {
       return {
         todos: todos.filter((todo) => todo.id !== id),
       };
     });
-  };
+  }
 
-  onItemAdd = (text: string): void => {
+  onItemAdd(text: string): void {
     this.setState(({ todos }) => {
       this.latestId += 1;
 
@@ -133,19 +150,13 @@ class App extends React.Component<Props, State> {
         todos: [...todos, newTodo],
       };
     });
-  };
+  }
 
   render() {
     const visibleTodos = this.searchTodos(
       this.filterTodos(this.state.todos, this.state.filter),
       this.state.searchField
     );
-
-    const allTodosCount = this.state.todos.length;
-    const uncompletedTodosCount = this.state.todos.filter(
-      (todo) => !todo.completed
-    ).length;
-    const completedTodosCount = allTodosCount - uncompletedTodosCount;
 
     return (
       <div className="App">
@@ -156,9 +167,6 @@ class App extends React.Component<Props, State> {
         <ItemStatusFilter
           filter={this.state.filter}
           onFilterChange={this.onFilterChange}
-          allTodosCount={allTodosCount}
-          uncompletedTodosCount={uncompletedTodosCount}
-          completedTodosCount={completedTodosCount}
         />
         <TodoList
           todos={visibleTodos}

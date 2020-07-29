@@ -5,16 +5,14 @@ type Props = {
   onSearchChange: Function;
 };
 
-const SearchBox = (props: Props) => {
-  return (
-    <div className="search-box">
-      <input
-        type="search"
-        placeholder={props.placeholder}
-        onChange={(event) => props.onSearchChange(event)}
-      />
-    </div>
-  );
-};
+const SearchBox = (props: Props) => (
+  <div className="search-box">
+    <input
+      type="search"
+      placeholder={props.placeholder}
+      onChange={(event) => props.onSearchChange(event)}
+    />
+  </div>
+);
 
 export default SearchBox;
