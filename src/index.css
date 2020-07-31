@@ -1,31 +1,5 @@
-/* box-sizing reset */
-html {
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-/* ################# */
-
-body,
-ul {
-  margin: 0;
-}
-
-ul {
-  /*list-style: none;*/
-  padding: 0;
-}
-
-button,
-input {
-  font-family: inherit;
-}
-
 body {
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
